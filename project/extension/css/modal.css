@@ -1,0 +1,325 @@
+/* NSFW Detector Modal Styles */
+
+.nsfw-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.nsfw-modal-overlay.nsfw-modal-show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nsfw-modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.3s ease;
+  animation: modalSlideIn 0.3s ease forwards;
+}
+
+.nsfw-modal-show .nsfw-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.nsfw-modal-header {
+  padding: 24px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nsfw-modal-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nsfw-modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.nsfw-modal-body {
+  padding: 24px;
+}
+
+.nsfw-risk-level {
+  border: 2px solid;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.nsfw-risk-badge {
+  display: inline-block;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.nsfw-risk-description {
+  margin: 0;
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.nsfw-detection-details {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.nsfw-confidence {
+  margin-bottom: 8px;
+}
+
+.nsfw-image-info {
+  word-break: break-all;
+}
+
+.nsfw-categories {
+  margin-bottom: 20px;
+}
+
+.nsfw-categories h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.nsfw-categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nsfw-category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.nsfw-category-name {
+  text-transform: capitalize;
+  color: #374151;
+  font-weight: 500;
+}
+
+.nsfw-category-value {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.nsfw-modal-actions {
+  padding: 0 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nsfw-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.nsfw-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nsfw-btn:active {
+  transform: translateY(0);
+}
+
+.nsfw-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.nsfw-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.nsfw-btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.nsfw-btn-danger:hover {
+  background: #dc2626;
+}
+
+.nsfw-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.nsfw-powered-by {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .nsfw-modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .nsfw-modal-header,
+  .nsfw-modal-body,
+  .nsfw-modal-actions {
+    padding: 16px;
+  }
+  
+  .nsfw-modal-actions {
+    flex-direction: column;
+  }
+  
+  .nsfw-btn {
+    width: 100%;
+  }
+  
+  .nsfw-modal-title {
+    font-size: 20px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .nsfw-modal-content {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .nsfw-modal-header {
+    border-bottom-color: #374151;
+  }
+  
+  .nsfw-modal-title {
+    color: #f9fafb;
+  }
+  
+  .nsfw-risk-description {
+    color: #d1d5db;
+  }
+  
+  .nsfw-detection-details {
+    color: #9ca3af;
+  }
+  
+  .nsfw-categories h4 {
+    color: #f9fafb;
+  }
+  
+  .nsfw-category-item {
+    background: #374151;
+  }
+  
+  .nsfw-category-name {
+    color: #d1d5db;
+  }
+  
+  .nsfw-category-value {
+    color: #9ca3af;
+  }
+  
+  .nsfw-btn-secondary {
+    background: #374151;
+    color: #d1d5db;
+    border-color: #4b5563;
+  }
+  
+  .nsfw-btn-secondary:hover {
+    background: #4b5563;
+  }
+  
+  .nsfw-modal-footer {
+    border-top-color: #374151;
+  }
+  
+  .nsfw-powered-by {
+    color: #6b7280;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .nsfw-modal-overlay {
+    background: rgba(0, 0, 0, 0.95);
+  }
+  
+  .nsfw-modal-content {
+    border: 2px solid #000;
+  }
+  
+  .nsfw-btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  .nsfw-modal-overlay,
+  .nsfw-modal-content,
+  .nsfw-btn {
+    transition: none;
+    animation: none;
+  }
+  
+  .nsfw-modal-show .nsfw-modal-content {
+    transform: none;
+  }
+}

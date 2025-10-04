@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "NSFW Content Detector",
+  "version": "1.0.0",
+  "description": "Deteksi dan blokir konten NSFW dengan AI",
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "js/helpers.js",
+        "js/api.js",
+        "js/auth.js",
+        "js/levels.js",
+        "js/modal.js",
+        "js/processing.js",
+        "js/observers.js",
+        "js/content.js"
+      ],
+      "css": ["css/modal.css"],
+      "run_at": "document_end"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "NSFW Detector"
+  },
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["modal.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
