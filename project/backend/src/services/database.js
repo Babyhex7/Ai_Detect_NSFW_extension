@@ -4,7 +4,7 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || 3306,
-  database: process.env.DB_NAME || "nsfw_detector",
+  database: process.env.DB_NAME || "nsfw_detection_extension",
   username: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
   dialect: "mysql",
@@ -34,4 +34,35 @@ const testConnection = async () => {
   }
 };
 
-module.exports = sequelize;
+// Initialize database connection
+const initialize = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection has been established successfully.");
+
+    // Sync models (create tables if they don't exist)
+    await sequelize.sync({ alter: true });
+    console.log("Database models synchronized successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    throw error;
+  }
+};
+
+// Close database connection
+const close = async () => {
+  try {
+    await sequelize.close();
+    console.log("Database connection closed successfully.");
+  } catch (error) {
+    console.error("Error closing database connection:", error);
+    throw error;
+  }
+};
+
+module.exports = {
+  sequelize,
+  initialize,
+  close,
+  testConnection,
+};

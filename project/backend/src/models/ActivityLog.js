@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
-const database = require("../services/database");
+const { sequelize } = require("../services/database");
 
-const ActivityLog = database.define(
+const ActivityLog = sequelize.define(
   "ActivityLog",
   {
     id: {
@@ -13,35 +13,32 @@ const ActivityLog = database.define(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "users",
+        model: "Users",
         key: "id",
       },
     },
-    type: {
+    action: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         isIn: [
           [
-            "page_visit",
-            "content_detected",
-            "modal_activity",
-            "settings_change",
             "login",
             "logout",
+            "register",
+            "password_change",
+            "settings_update",
+            "detection_scan",
+            "block_content",
           ],
         ],
       },
     },
-    action: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    details: {
+      type: DataTypes.JSON,
+      defaultValue: {},
     },
-    url: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    domain: {
+    ipAddress: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -49,120 +46,38 @@ const ActivityLog = database.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    ipAddress: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    data: {
-      type: DataTypes.JSON,
-      allowNull: true,
-      defaultValue: {},
-    },
-    sessionId: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    success: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {
-    tableName: "activity_logs",
     timestamps: true,
     indexes: [
-      {
-        fields: ["userId"],
-      },
-      {
-        fields: ["type"],
-      },
-      {
-        fields: ["domain"],
-      },
-      {
-        fields: ["createdAt"],
-      },
-      {
-        fields: ["userId", "type"],
-      },
+      { fields: ["userId"] },
+      { fields: ["action"] },
+      { fields: ["createdAt"] },
     ],
   }
 );
 
-// Static methods
-ActivityLog.logActivity = async function (userId, type, data = {}) {
+// Static method to log activity
+ActivityLog.logActivity = async function (userId, action, details = {}) {
   try {
-    return await this.create({
+    await this.create({
       userId,
-      type,
-      action: data.action || null,
-      url: data.url || null,
-      domain: data.domain || null,
-      userAgent: data.userAgent || null,
-      ipAddress: data.ipAddress || null,
-      data: data.data || {},
-      sessionId: data.sessionId || null,
+      action,
+      details: {
+        ...details,
+        timestamp: new Date().toISOString(),
+      },
+      ipAddress: details.ipAddress,
+      userAgent: details.userAgent,
+      success: details.success !== false,
     });
   } catch (error) {
     console.error("Failed to log activity:", error);
-    return null;
   }
-};
-
-ActivityLog.getRecentActivity = async function (userId, limit = 50) {
-  return await this.findAll({
-    where: { userId },
-    order: [["createdAt", "DESC"]],
-    limit,
-  });
-};
-
-ActivityLog.getActivityStats = async function (userId, timeframe = "7d") {
-  const where = { userId };
-
-  if (timeframe !== "all") {
-    const days = parseInt(timeframe.replace("d", ""));
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-    where.createdAt = {
-      [database.Sequelize.Op.gte]: startDate,
-    };
-  }
-
-  const [totalActivities, byType, byDomain] = await Promise.all([
-    ActivityLog.count({ where }),
-    ActivityLog.findAll({
-      where,
-      attributes: [
-        "type",
-        [database.Sequelize.fn("COUNT", database.Sequelize.col("id")), "count"],
-      ],
-      group: ["type"],
-      raw: true,
-    }),
-    ActivityLog.findAll({
-      where: {
-        ...where,
-        domain: { [database.Sequelize.Op.ne]: null },
-      },
-      attributes: [
-        "domain",
-        [database.Sequelize.fn("COUNT", database.Sequelize.col("id")), "count"],
-      ],
-      group: ["domain"],
-      order: [
-        [database.Sequelize.fn("COUNT", database.Sequelize.col("id")), "DESC"],
-      ],
-      limit: 10,
-      raw: true,
-    }),
-  ]);
-
-  return {
-    total: totalActivities,
-    byType: byType.reduce((acc, item) => {
-      acc[item.type] = parseInt(item.count);
-      return acc;
-    }, {}),
-    topDomains: byDomain,
-  };
 };
 
 module.exports = ActivityLog;
